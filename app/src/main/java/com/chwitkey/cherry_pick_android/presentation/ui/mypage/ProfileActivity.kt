@@ -340,12 +340,8 @@ class ProfileActivity : AppCompatActivity(),CameraDialogInterface, UserDeleteDia
                         val platform = userDataRepository.getUserData().platform
                         Log.d(TAG, "플랫폼:$platform")
                         when(platform){
-                            "kakao" -> {
-                                kakaoDelete()
-                            }
-                            "naver" -> {
-                                naverDelete()
-                            }
+                            "kakao" -> { kakaoDelete() }
+                            "naver" -> { naverDelete() }
                         }
                         loginViewModel.setUserData("userId", "")
                         loginViewModel.setUserData("token", "")
