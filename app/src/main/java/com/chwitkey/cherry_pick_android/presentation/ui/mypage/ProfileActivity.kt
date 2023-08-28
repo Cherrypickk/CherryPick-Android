@@ -40,6 +40,10 @@ import com.chwitkey.cherry_pick_android.presentation.ui.mypage.dialog.UserDelete
 import com.chwitkey.cherry_pick_android.presentation.ui.mypage.dialog.UserDeleteDialogInterface
 import com.chwitkey.cherry_pick_android.presentation.viewmodel.login.LoginViewModel
 import com.chwitkey.cherry_pick_android.presentation.viewmodel.mypage.MyPageViewModel
+import com.kakao.sdk.user.UserApiClient
+import com.navercorp.nid.NaverIdLoginSDK
+import com.navercorp.nid.oauth.NidOAuthLogin
+import com.navercorp.nid.oauth.OAuthLoginCallback
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -333,6 +337,16 @@ class ProfileActivity : AppCompatActivity(),CameraDialogInterface, UserDeleteDia
                 // 200: 성공, 404: 존재하지 않는 유저
                 withContext(Dispatchers.Main){
                     if(response == 200){
+                        val platform = userDataRepository.getUserData().platform
+                        Log.d(TAG, "플랫폼:$platform")
+                        when(platform){
+                            "kakao" -> {
+                                kakaoDelete()
+                            }
+                            "naver" -> {
+                                naverDelete()
+                            }
+                        }
                         loginViewModel.setUserData("userId", "")
                         loginViewModel.setUserData("token", "")
                         loginViewModel.setUserData("platform", "")
@@ -412,6 +426,27 @@ class ProfileActivity : AppCompatActivity(),CameraDialogInterface, UserDeleteDia
             return "$year.$month.$day"
         }
         return ""
+    }
+
+    // 카카오톡 연동해제
+    private fun kakaoDelete(){
+        UserApiClient.instance.unlink {}
+    }
+
+    // 네이버 연동해제
+    private fun naverDelete(){
+        NidOAuthLogin().callDeleteTokenApi(this, object: OAuthLoginCallback{
+            override fun onError(errorCode: Int, message: String) {
+                onFailure(errorCode, message)
+            }
+            override fun onFailure(httpStatus: Int, message: String) {
+                Log.d(TAG, "errorCode: ${NaverIdLoginSDK.getLastErrorCode().code}")
+                Log.d(TAG, "errorDesc: ${NaverIdLoginSDK.getLastErrorDescription()}")
+            }
+            override fun onSuccess() {}
+
+        })
+
     }
 
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.chwitkey.cherry_pick_android.BuildConfig
 import com.navercorp.nid.NaverIdLoginSDK
+import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
 import dagger.hilt.android.qualifiers.ActivityContext
 import javax.inject.Inject
@@ -49,4 +50,5 @@ class NaverLoginManager @Inject constructor(
         )
         NaverIdLoginSDK.authenticate(context, oAuthLoginCallback)
     }
+
 }
